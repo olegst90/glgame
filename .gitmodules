@@ -1,0 +1,3 @@
+[submodule "tiengine"]
+	path = tiengine
+	url = https://github.com/olegst90/tiengine.git

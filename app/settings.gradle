@@ -1,0 +1,2 @@
+include ':tiengine'
+project(':tiengine').projectDir = new File('../tiengine')

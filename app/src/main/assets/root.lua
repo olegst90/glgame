@@ -1,0 +1,1 @@
+print("Staring root script")
