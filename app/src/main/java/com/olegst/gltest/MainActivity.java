@@ -8,28 +8,23 @@ import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.widget.Toast;
+
+import com.olegst.gltest.engine.GLGraphicHost;
+import com.olegst.gltest.engine.ResourceManager;
 import com.tiengine.scripting.ScriptHost;
 import com.tiengine.graphics.GGraphicHost;
 import com.tiengine.controls.GControlHost;
+import com.tiengine.utils.GResourceFactory;
 import android.util.Log;
-import com.tiengine.utils.ResourceFactory;
+
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class MainActivity extends AppCompatActivity implements ResourceFactory.Interface {
+public class MainActivity extends AppCompatActivity {
     private GLSurfaceView glSurfaceView;
     private boolean rendererSet = false;
-
-    @Override
-    public InputStream loadScript(String name) throws FileNotFoundException {
-        try {
-            return getAssets().open(name);
-        } catch (IOException e) {
-            throw new FileNotFoundException();
-        }
-    }
 
     Thread scriptThread;
     ScriptHost scriptHost;
@@ -37,8 +32,8 @@ public class MainActivity extends AppCompatActivity implements ResourceFactory.I
     GControlHost controlHost;
 
     void initEngine() {
-        ResourceFactory.setResourceFactory(this);
-        graphicHost = new GGraphicHost();
+        GResourceFactory.setResourceFactory(new ResourceManager(this, glSurfaceView));
+        graphicHost = new GLGraphicHost();
         controlHost = new GControlHost(graphicHost);
         scriptHost = new ScriptHost();
         scriptHost.setGraphicHost(graphicHost);
@@ -66,8 +61,8 @@ public class MainActivity extends AppCompatActivity implements ResourceFactory.I
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initEngine();
         glSurfaceView = new GLSurfaceView(this);
+        initEngine();
 
         // Проверяем поддерживается ли OpenGL ES 2.0.
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);

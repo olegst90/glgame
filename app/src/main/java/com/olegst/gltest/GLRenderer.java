@@ -7,16 +7,32 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+
+import com.olegst.gltest.engine.ResourceManager;
 import com.tiengine.graphics.GGraphicHost;
+import com.tiengine.utils.GResourceFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class GLRenderer implements Renderer {
+    static Logger logger = LoggerFactory.getLogger(ResourceManager.class);
+
     GGraphicHost graphicHost;
     public GLRenderer(GGraphicHost ghost) {
         graphicHost = ghost;
     }
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
+        try {
+            GResourceFactory.resourceFactory().reloadTextures();
+        } catch (IOException e) {
+            logger.error("Could not reload textures");
+        }
+
+        graphicHost.prepare();
     }
 
     @Override
