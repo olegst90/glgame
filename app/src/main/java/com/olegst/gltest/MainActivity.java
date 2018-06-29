@@ -8,7 +8,9 @@ import android.content.pm.ConfigurationInfo;
 import android.opengl.GLSurfaceView;
 import android.os.Bundle;
 import android.widget.Toast;
-import com.tiengine.scripting.ScriptEngine;
+import com.tiengine.scripting.ScriptHost;
+import com.tiengine.graphics.GGraphicHost;
+import com.tiengine.controls.GControlHost;
 import android.util.Log;
 import com.tiengine.utils.ResourceFactory;
 
@@ -30,18 +32,25 @@ public class MainActivity extends AppCompatActivity implements ResourceFactory.I
     }
 
     Thread scriptThread;
+    ScriptHost scriptHost;
+    GGraphicHost graphicHost;
+    GControlHost controlHost;
 
     void initEngine() {
         ResourceFactory.setResourceFactory(this);
+        graphicHost = new GGraphicHost();
+        controlHost = new GControlHost(graphicHost);
+        scriptHost = new ScriptHost();
+        scriptHost.setGraphicHost(graphicHost);
+        scriptHost.setControlHost(controlHost);
 
         scriptThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Log.d("main","Creating script engine");
-                ScriptEngine engine = new ScriptEngine();
-                engine.loadScript("root.lua");
+                scriptHost.loadScript("root.lua");
                 try {
-                    while (engine.scriptLoop() == ScriptEngine.CONTINUE) {
+                    while (scriptHost.scriptLoop() == ScriptHost.CONTINUE) {
                         //terminate if...
                     }
                 } catch(Exception e) {
@@ -67,7 +76,7 @@ public class MainActivity extends AppCompatActivity implements ResourceFactory.I
         if (supportsEs2) {
 // Request an OpenGL ES 2.0 compatible context. glSurfaceView.setEGLContextClientVersion(2);
 // Assign our renderer.
-            glSurfaceView.setRenderer(new GLRenderer()); rendererSet = true;
+            glSurfaceView.setRenderer(new GLRenderer(graphicHost)); rendererSet = true;
         } else {
             Toast.makeText(this, "This device does not support OpenGL ES 2.0.", Toast.LENGTH_LONG).show(); return;
         }

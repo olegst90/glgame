@@ -7,8 +7,13 @@ import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glClear;
 import static android.opengl.GLES20.glViewport;
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
+import com.tiengine.graphics.GGraphicHost;
 
 public class GLRenderer implements Renderer {
+    GGraphicHost graphicHost;
+    public GLRenderer(GGraphicHost ghost) {
+        graphicHost = ghost;
+    }
     @Override
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
         glClearColor(1.0f, 0.0f, 0.0f, 0.0f);
